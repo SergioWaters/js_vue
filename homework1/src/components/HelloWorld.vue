@@ -17,29 +17,6 @@
       = {{ result }}
     </div>
 
-    <div class="operandPick">
-      <label for="operand1">
-        Операнд 1
-        <input
-          type="radio"
-          name="operand1"
-          id="operand1"
-          v-model="operandPick"
-          value="pick1"
-        />
-      </label>
-      <label for="operand2">
-        Операнд 2
-        <input
-          type="radio"
-          name="operand2"
-          id="operand2"
-          v-model="operandPick"
-          value="pick2"
-        />
-      </label>
-    </div>
-
     <div class="keyboard">
       <button
         v-for="operation in operationArr"
@@ -50,14 +27,14 @@
       </button>
     </div>
 
-    <input
-      type="checkbox"
-      name="showNumbers"
-      id="numbersCheckbox"
-      v-model="numberKeysCheckbox"
-    />
     <label for="numbersCheckbox">
-      Отобразить или скрыть экранную клавиатуру с цифрами
+      <input
+        type="checkbox"
+        name="showNumbers"
+        id="numbersCheckbox"
+        v-model="numberKeysCheckbox"
+      />
+      Отобразить экранную клавиатуру с цифрами
     </label>
 
     <div class="numberKeys" v-show="numberKeysCheckbox">
@@ -69,6 +46,29 @@
         {{ number }}
       </button>
       <button @click="removeNumber()">backspace</button>
+
+      <div class="operandPick">
+        <label for="operand1">
+          Операнд 1
+          <input
+            type="radio"
+            name="operand1"
+            id="operand1"
+            v-model="operandPick"
+            value="pick1"
+          />
+        </label>
+        <label for="operand2">
+          Операнд 2
+          <input
+            type="radio"
+            name="operand2"
+            id="operand2"
+            v-model="operandPick"
+            value="pick2"
+          />
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
   data() {
     return {
       operandPick: " ",
-      numberKeysCheckbox: "true",
+      numberKeysCheckbox: "false",
       message: "Hello Vue",
       operand1: 0,
       operand2: 0,
@@ -111,8 +111,10 @@ export default {
     },
 
     removeNumber() {
-      if (this.operandPick === "pick1") Array.pop(this.operand1);
-      if (this.operandPick === "pick2") Array.pop(this.operand2);
+      if (this.operandPick === "pick1")
+        this.operand1 = this.operand1.slice(0, -1);
+      if (this.operandPick === "pick2")
+        this.operand2 = this.operand2.slice(0, -1);
     },
 
     calculate(operation) {
@@ -157,5 +159,8 @@ li {
 }
 a {
   color: #42b983;
+}
+.keyboard {
+  margin: 20px 0px 50px 0px;
 }
 </style>
