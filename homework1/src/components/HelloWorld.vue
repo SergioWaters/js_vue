@@ -2,27 +2,73 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <hr />
-    <!-- <button v-on:click="doThat('hello', $event)">Click me</button>
-    <button @click="doThat('hello', $event)">Click me 2</button>
-    <input type="text" @blur="onValidate" @input=""/> -->
     <div class="display">
-      <input v-model.number="operand1" type="number" />
-      <input v-model.number="operand2" type="number" />
+      <input
+        v-model.number="operand1"
+        type="number"
+        :disabled="operandPick === 'pick2'"
+      />
+      <input
+        v-model.number="operand2"
+        type="number"
+        :disabled="operandPick === 'pick1'"
+      />
 
       = {{ result }}
     </div>
 
-    <!-- <input :value="operand1" @input="operand1 = $event.target.value"> -->
-    <div class="keyboard">
-      <button v-on:click="result = operand1 + operand2">+</button>
-      <button @click="result = operand1 - operand2">-</button>
-      <button @click="divide(operand1, operand2)">/</button>
-      <button @click="multiply">*</button>
-      <button @click="pow">pow</button>
-      <button @click="intDivide">%</button>
+    <div class="operandPick">
+      <label for="operand1">
+        Операнд 1
+        <input
+          type="radio"
+          name="operand1"
+          id="operand1"
+          v-model="operandPick"
+          value="pick1"
+        />
+      </label>
+      <label for="operand2">
+        Операнд 2
+        <input
+          type="radio"
+          name="operand2"
+          id="operand2"
+          v-model="operandPick"
+          value="pick2"
+        />
+      </label>
     </div>
-    <div class="numberKeys">
-      <button v-for(number of numberKeys) :key="number"></button>
+
+    <div class="keyboard">
+      <button
+        v-for="operation in operationArr"
+        :key="operation"
+        @click="calculate(operation)"
+      >
+        {{ operation }}
+      </button>
+    </div>
+
+    <input
+      type="checkbox"
+      name="showNumbers"
+      id="numbersCheckbox"
+      v-model="numberKeysCheckbox"
+    />
+    <label for="numbersCheckbox">
+      Отобразить или скрыть экранную клавиатуру с цифрами
+    </label>
+
+    <div class="numberKeys" v-show="numberKeysCheckbox">
+      <button
+        v-for="number in numberArr"
+        :key="number"
+        @click="addNumber(number)"
+      >
+        {{ number }}
+      </button>
+      <button @click="removeNumber()">backspace</button>
     </div>
   </div>
 </template>
@@ -38,34 +84,59 @@ export default {
   },
   data() {
     return {
+      operandPick: " ",
+      numberKeysCheckbox: "true",
       message: "Hello Vue",
       operand1: 0,
       operand2: 0,
       result: 0,
-      numberKeys: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      numberArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      operationArr: ["+", "-", "/", "*", "%", "pow"],
     };
   },
   methods: {
     doThat(str, evnt) {
       console.log("click", str, evnt);
     },
+
     onValidate() {
       console.log("validation true");
     },
-    divide(op1, op2) {
-      this.result = op1 / op2;
+
+    addNumber(number) {
+      if (this.operandPick === "pick1")
+        this.operand1 = this.operand1 + `${number}`;
+      if (this.operandPick === "pick2")
+        this.operand2 = this.operand2 + `${number}`;
     },
-    multiply() {
-      const { operand1, operand2 } = this;
-      this.result = operand1 * operand2;
+
+    removeNumber() {
+      if (this.operandPick === "pick1") Array.pop(this.operand1);
+      if (this.operandPick === "pick2") Array.pop(this.operand2);
     },
-    pow() {
+
+    calculate(operation) {
       const { operand1, operand2 } = this;
-      this.result = Math.pow(operand1, operand2);
-    },
-    intDivide() {
-      const { operand1, operand2 } = this;
-      this.result = operand1 % operand2;
+      switch (operation) {
+        case "+":
+          this.result = +operand1 + +operand2;
+          break;
+        case "-":
+          this.result = +operand1 - +operand2;
+          break;
+        case "/":
+          this.result = +operand1 / +operand2;
+          break;
+        case "*":
+          this.result = +operand1 * +operand2;
+          break;
+        case "%":
+          this.result = +operand1 % +operand2;
+          break;
+        case "pow":
+          this.result = Math.pow(+operand1, +operand2);
+          break;
+      }
     },
   },
 };
