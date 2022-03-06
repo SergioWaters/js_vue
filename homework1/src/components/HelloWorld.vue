@@ -21,6 +21,9 @@
       <button @click="pow">pow</button>
       <button @click="intDivide">%</button>
     </div>
+    <div class="numberKeys">
+      <button v-for(number of numberKeys) :key="number"></button>
+    </div>
   </div>
 </template>
 
@@ -39,6 +42,7 @@ export default {
       operand1: 0,
       operand2: 0,
       result: 0,
+      numberKeys: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     };
   },
   methods: {
